@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block content %}
+{% load bootstrap4 %}
+<div class="container wrapper flex-grow-1">
+    <h1>Сгенерировать тексты по списку запросов</h1>
+Для проверки вставьте запись вида задание на текст||тема текста отдельно'. Пример правильной записи:<br>
+<b>сгенерируй текст на тему ремонт телефонов sony xperia||ремонт телефонов sony xperia</b><br>
+Каждое задание на текст должно начинаться с новой строки. После проверки результат будет на <a href="{% url 'texts_list' %}">этой странице</a>
+<form  class="form-group mt-3" action="{% url 'generate_texts' %}" method="post">
+    {% csrf_token %}
+    {% bootstrap_form form %}
+    <button type="submit" class="btn btn-primary">Сгенерировать</button>
+</form>
+</div>
+{% endblock %}

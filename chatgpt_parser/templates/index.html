@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block content %}
+ {% if user.is_authenticated %}
+<h1 class="p-3">Генератор текстов на основе ChatGPT</h1>
+<p class="p-3">Для добавления и проверки ваших урл пройдите по ссылкам сверху</p>
+<p class="p-3"><a href="{% url 'generate_texts' %}">Сгенерировать тексты по списку</a></p>
+<p class="p-3"><a href="{% url 'texts_list' %}">Результаты генерации</a></p>
+{% else %}
+<h1 class="p-3">Генератор текстов на основе ChatGPT</h1>
+<p class="p-3">Для доступа к функциям необходимо авторизоваться</p>
+  {% endif %}
+{% endblock %}

@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Генератор текстов</title>
+    {% load bootstrap4 %}
+    {% bootstrap_css %}
+    {% bootstrap_javascript jquery='full' %}
+    <style>
+    .dropdown:hover .dropdown-menu {
+        display: block;
+    }
+    </style>
+</head>
+
+<body>
+<nav class="navbar navbar-expand-md navbar-dark bg-dark">
+  <a class="navbar-brand" href="{% url 'index' %}">Генератор текстов</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExample04" aria-controls="navbarsExample04" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  {% if user.is_authenticated %}
+  <div class="collapse navbar-collapse" id="navbarsExample04">
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'generate_texts' %}"> Сгенерировать тексты </a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="{% url 'texts_list' %}"> Результаты генерации </a>
+      </li>
+    </ul>
+    <div class="my-2 my-md-0">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item">
+          <a class="nav-link" href="{% url 'login' %}">Вы вошли как: {{ user.username }}</a>
+            </li>
+            <li class="nav-item">
+      <a class="nav-link" href="{% url 'logout' %}">Выйти</a>
+            </li>
+        </ul>
+    </div>
+  </div>
+  {% else %}
+  <div class="collapse navbar-collapse" id="navbarsExample04">
+    <ul class="navbar-nav mr-auto">
+
+    </ul>
+    <div class="my-2 my-md-0">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item">
+      <a class="nav-link" href="{% url 'login' %}">Войти</a>
+            </li>
+        </ul>
+    </div>
+  </div>
+  {% endif %}
+</nav>
+{% for notification in request.notifications %}
+    <div class="notification alert alert-primary border border-info">
+        {{ notification.notification }}
+        <button class="dismiss-notification-button btn btn-secondary" data-notification-id="{{ notification.id }}">Ок</button>
+    </div>
+{% endfor %}
+{% if messages %}
+<div class="messages">
+    {% for message in messages %}
+    <div {% if message.tags %} class="alert alert-{{ message.tags }}"{% endif %}>{{ message }}</div>
+    {% endfor %}
+</div>
+{% endif %}
+<script>
+$('.dismiss-notification-button').click(function() {
+    var notificationId = $(this).data('notification-id');
+    var notificationElement = $(this).closest('.notification');
+
+    $.ajax({
+        url: '/dismiss-notification/' + notificationId + '/',
+        type: 'POST',
+        headers: {
+            'X-CSRFToken': '{{ csrf_token }}'  // include CSRF token for Django to process POST request
+        },
+        success: function(data) {
+            // Hide the notification in the DOM
+            notificationElement.hide();
+        }
+    });
+});
+</script>
+{% block content %}{% endblock %}

@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block content %}
+{% load bootstrap4 %}
+<div class="container wrapper flex-grow-1">
+    <h1>Удалить URL</h1>
+    <div>Вы уверены что хотите удалить {{ textsparsingset.set_name }}?</div>
+<form action="{% url 'delete_texts_set' pk=textsparsingset.id %}" method="post">
+    {% csrf_token %}
+    <input class="btn btn-danger" type="submit" value='Да, удалить'>
+</form>
+</div>
+{% endblock %}

@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Список URL</h1>
+<p>Здесь выводится список текстов на парсинг
+</p>
+<div class="table-responsive">
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Название</th>
+        <th>Автор</th>
+        <th>Количество</th>
+        <th>Готово?</th>
+        <th>Уникальность</th>
+        <th>Количество переписок</th>
+        <th>Температура</th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for text_set in text_sets %}
+      <tr>
+        <td><a href="{% url 'download_set' set_id=text_set.id %}">{{ text_set.set_name }}</a></td>
+        <td>{{ text_set.author }}</td>
+        <td>{{ text_set.parsed_amount }} из {{ text_set.total_amount }} </td>
+        <td>{{ text_set.is_complete }}</td>
+        <td>{{ text_set.average_uniqueness }}</td>
+        <td>{{ text_set.average_attempts_to_uniqueness }}</td>
+        <td>{{ text_set.temperature }}</td>
+        <td>
+          <form action="{% url 'delete_texts_set' pk=text_set.id %}" method="get">
+          {% csrf_token %}
+          <input type="submit" value='Удалить'>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+      </tbody>
+</table>
+  </div>
+{% endblock %}
