@@ -7,7 +7,7 @@ app_start:
 	poetry run gunicorn -w 5 -b 0.0.0.0:$(PORT) --timeout 1600 chatgpt_parser.wsgi:application
 
 celery_start:
-	poetry run celery -A chatgpt_parser worker --loglevel=debug
+	poetry run celery -A chatgpt_parser worker --loglevel=debug -c 4
 
 makemigrations:
 	poetry run python manage.py makemigrations chatgpt_parser

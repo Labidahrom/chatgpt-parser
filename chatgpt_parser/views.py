@@ -61,6 +61,7 @@ class TextsList(ListView):
     model = TextsParsingSet
     template_name = 'text_set_list.html'
     context_object_name = 'text_sets'
+    queryset = TextsParsingSet.objects.all().order_by('created_at')
 
 
 class DeleteTextsSet(DeleteView):

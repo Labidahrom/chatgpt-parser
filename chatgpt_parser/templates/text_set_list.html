@@ -14,6 +14,7 @@
         <th>Уникальность</th>
         <th>Количество переписок</th>
         <th>Температура</th>
+        <th>Создан</th>
       </tr>
     </thead>
     <tbody>
@@ -26,6 +27,7 @@
         <td>{{ text_set.average_uniqueness }}</td>
         <td>{{ text_set.average_attempts_to_uniqueness }}</td>
         <td>{{ text_set.temperature }}</td>
+        <td>{{ text_set.created_at }}</td>
         <td>
           <form action="{% url 'delete_texts_set' pk=text_set.id %}" method="get">
           {% csrf_token %}
