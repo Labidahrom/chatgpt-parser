@@ -101,6 +101,14 @@ def generate_text_set_zip(text_set):
             header = text.header.replace('\r', '')
 
             zipf.writestr(f"{header}.txt", text_content)
+        failed_texts = text_set.failed_texts
+        low_uniqueness_texts = text_set.low_uniqueness_texts
+        print('failed_texts', failed_texts)
+        if failed_texts:
+            zipf.writestr("не получились.txt", failed_texts)
+        print('low_uniqueness_texts', low_uniqueness_texts)
+        if low_uniqueness_texts:
+            zipf.writestr("тексты с низкой уникальностью.txt", low_uniqueness_texts)
 
     buffer.seek(0)
     return buffer
@@ -113,7 +121,7 @@ def generate_texts(author,
                    task_strings,
                    rewriting_task,
                    required_uniqueness):
-    task_list = task_strings.split('\n')
+    task_list = [task for task in task_strings.split('\n') if "||" in task]
     new_set = TextsParsingSet.objects.create(
         total_amount=len(task_list),
         author=User.objects.get(pk=author),
@@ -121,14 +129,15 @@ def generate_texts(author,
         temperature=float(temperature)
     )
     for task in task_list:
-        if '||' not in task:
-            continue
         chat_request, header = task.split('||')
         text_data = generate_text(chat_request,
                                   temperature,
                                   rewriting_task,
                                   required_uniqueness)
+
         if not text_data:
+            new_set.failed_texts += task + '\n'
+            new_set.save()
             continue
         new_text = Text.objects.create(
             header=header,
@@ -139,21 +148,25 @@ def generate_texts(author,
             parsing_set=new_set
         )
 
+        if text_data['text_uniqueness'] < required_uniqueness:
+            new_set.low_uniqueness_texts += (task
+                                             + '||'
+                                             + str(text_data['text_uniqueness'])
+                                             + '\n')
+            new_set.save()
+
         new_set.parsed_amount = F('parsed_amount') + 1
         new_set.save(update_fields=['parsed_amount'])
         new_set.refresh_from_db()
-
-        print('finished adding text', header)
-        print('text id:', new_text.id)
 
     uniqueness_data = (
         Text.objects.filter(parsing_set=new_set).aggregate(
             average_attempts=Avg('attempts_to_uniqueness'),
             uniqueness=Avg('uniqueness')
         ))
-    print('uniquness data:', uniqueness_data['average_attempts'], uniqueness_data['uniqueness'])
-    new_set.average_attempts_to_uniqueness = uniqueness_data['average_attempts']
-    new_set.average_uniqueness = uniqueness_data['uniqueness']
+
+    new_set.average_attempts_to_uniqueness = uniqueness_data['average_attempts'] or 0
+    new_set.average_uniqueness = uniqueness_data['uniqueness'] or 0
     new_set.is_complete = True
     new_set.save()
     print('закончили работу')

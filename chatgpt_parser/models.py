@@ -13,6 +13,8 @@ class TextsParsingSet(models.Model):
     average_attempts_to_uniqueness = models.IntegerField(default=0)
     temperature = models.DecimalField(decimal_places=1, max_digits=2, default=0)
     created_at = models.DateTimeField(auto_now_add=True)
+    failed_texts = models.TextField(default='')
+    low_uniqueness_texts = models.TextField(default='')
 
     def __str__(self):
         return self.set_name

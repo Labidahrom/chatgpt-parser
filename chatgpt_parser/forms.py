@@ -29,7 +29,7 @@ class CreateTextForm(forms.Form):
     )
     required_uniqueness = forms.IntegerField(
         label='Требуемый процент уникальности. Если процент уникальности'
-              'ниже указанного значения, текст будет переписан',
+              ' ниже указанного значения, текст будет переписан',
         initial=80,
         min_value=0,
         max_value=100,
