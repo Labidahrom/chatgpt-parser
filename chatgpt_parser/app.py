@@ -148,7 +148,7 @@ def generate_texts(author,
             parsing_set=new_set
         )
 
-        if text_data['text_uniqueness'] < required_uniqueness:
+        if text_data['text_uniqueness'] < float(required_uniqueness):
             new_set.low_uniqueness_texts += (task
                                              + '||'
                                              + str(text_data['text_uniqueness'])
