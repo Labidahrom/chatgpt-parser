@@ -15,6 +15,7 @@ class TextsParsingSet(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     failed_texts = models.TextField(default='')
     low_uniqueness_texts = models.TextField(default='')
+    task_strings = models.TextField(default='')
 
     def __str__(self):
         return self.set_name

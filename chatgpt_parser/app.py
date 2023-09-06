@@ -102,9 +102,11 @@ def generate_text_set_zip(text_set):
             header = text.header.replace('\r', '')
 
             zipf.writestr(f"{header}.txt", text_content)
+        task_strings = text_set.task_strings
         failed_texts = text_set.failed_texts
         low_uniqueness_texts = text_set.low_uniqueness_texts
         print('packing main text')
+        zipf.writestr("запрос на тексты.txt", task_strings)
         if failed_texts:
             zipf.writestr("не получились.txt", failed_texts)
         if low_uniqueness_texts:
@@ -126,7 +128,8 @@ def generate_texts(author,
         total_amount=len(task_list),
         author=User.objects.get(pk=author),
         set_name=set_name,
-        temperature=float(temperature)
+        temperature=float(temperature),
+        task_strings=task_strings
     )
     for task in task_list:
         chat_request, header = task.split('||')
@@ -139,7 +142,7 @@ def generate_texts(author,
             new_set.failed_texts += task + '\n'
             new_set.save()
             continue
-        new_text = Text.objects.create(
+        Text.objects.create(
             header=header,
             text=text_data['text'],
             attempts_to_uniqueness=text_data['attempts_to_uniqueness'],
