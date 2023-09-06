@@ -1,19 +1,18 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render
 from django.contrib.auth.views import LoginView, LogoutView
 from django.urls import reverse_lazy
-from django.utils.translation import gettext as _
-from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib.auth.forms import AuthenticationForm
-from django.views.generic import UpdateView, DeleteView
+from django.views.generic import DeleteView
 from django.views.generic.list import ListView
 from django.views import View
-from chatgpt_parser.models import Text
 from chatgpt_parser.app import generate_texts, generate_text_set_zip
 from chatgpt_parser.forms import CreateTextForm
-from chatgpt_parser.models import Text, TextsParsingSet
-from django.views.decorators.http import require_POST
-from django.shortcuts import get_object_or_404
+from chatgpt_parser.models import TextsParsingSet
 from django.http import FileResponse
+import logging
+
+
+logger = logging.getLogger(__name__)
 
 
 def index(request):

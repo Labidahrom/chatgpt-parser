@@ -56,12 +56,6 @@
   </div>
   {% endif %}
 </nav>
-{% for notification in request.notifications %}
-    <div class="notification alert alert-primary border border-info">
-        {{ notification.notification }}
-        <button class="dismiss-notification-button btn btn-secondary" data-notification-id="{{ notification.id }}">Ок</button>
-    </div>
-{% endfor %}
 {% if messages %}
 <div class="messages">
     {% for message in messages %}
@@ -69,22 +63,5 @@
     {% endfor %}
 </div>
 {% endif %}
-<script>
-$('.dismiss-notification-button').click(function() {
-    var notificationId = $(this).data('notification-id');
-    var notificationElement = $(this).closest('.notification');
 
-    $.ajax({
-        url: '/dismiss-notification/' + notificationId + '/',
-        type: 'POST',
-        headers: {
-            'X-CSRFToken': '{{ csrf_token }}'  // include CSRF token for Django to process POST request
-        },
-        success: function(data) {
-            // Hide the notification in the DOM
-            notificationElement.hide();
-        }
-    });
-});
-</script>
 {% block content %}{% endblock %}

@@ -4,7 +4,7 @@ start:
 	poetry run celery -A chatgpt_parser worker --loglevel=info
 
 app_start:
-	poetry run gunicorn -w 5 -b 0.0.0.0:$(PORT) --timeout 1600 chatgpt_parser.wsgi:application
+	poetry run gunicorn -w 5 -b 0.0.0.0:8000 --timeout 60 chatgpt_parser.wsgi:application > output.log 2>&1
 
 celery_start:
 	poetry run celery -A chatgpt_parser worker --loglevel=debug -c 4

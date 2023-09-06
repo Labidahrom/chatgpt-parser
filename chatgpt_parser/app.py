@@ -90,6 +90,7 @@ def generate_text(task, temperature, rewriting_task, required_uniqueness):
 
 
 def generate_text_set_zip(text_set):
+    print('starting make archive')
     buffer = BytesIO()
 
     with zipfile.ZipFile(buffer, 'a', zipfile.ZIP_DEFLATED, False) as zipf:
@@ -103,10 +104,9 @@ def generate_text_set_zip(text_set):
             zipf.writestr(f"{header}.txt", text_content)
         failed_texts = text_set.failed_texts
         low_uniqueness_texts = text_set.low_uniqueness_texts
-        print('failed_texts', failed_texts)
+        print('packing main text')
         if failed_texts:
             zipf.writestr("не получились.txt", failed_texts)
-        print('low_uniqueness_texts', low_uniqueness_texts)
         if low_uniqueness_texts:
             zipf.writestr("тексты с низкой уникальностью.txt", low_uniqueness_texts)
 
