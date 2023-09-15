@@ -42,7 +42,8 @@ class GenerateTexts(View):
             temperature=request.POST.get('temperature', ''),
             task_strings=request.POST.get('tasks_strings', ''),
             required_uniqueness=request.POST.get('required_uniqueness', ''),
-            rewriting_task=request.POST.get('rewriting_task', ''))
+            rewriting_task=request.POST.get('rewriting_task', ''),
+            text_len=int(request.POST.get('text_len', '')))
         return render(request, 'index.html')
 
 

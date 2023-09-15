@@ -25,7 +25,21 @@ def get_text_from_chat(task, temperature):
         ],
         temperature=float(temperature)
     )
-    print('Сгенерили текст на тему:', task)
+    return result['choices'][0]['message']['content']
+
+
+def add_text(text, text_len):
+    task = (f'Допиши пожалуйста следующий текст,'
+            f'что бы его длина составила {text_len}'
+            f' символов или больше:\n{text}')
+    result = openai.ChatCompletion.create(
+        model='gpt-3.5-turbo',
+        messages=[
+            {'role': 'user', 'content': task}
+        ],
+        temperature=0
+    )
+
     return result['choices'][0]['message']['content']
 
 
@@ -67,9 +81,12 @@ def get_text_uniqueness(text):
         attempts += 1
 
 
-def generate_text(task, temperature, rewriting_task, required_uniqueness):
+def generate_text(task, temperature, rewriting_task, required_uniqueness, text_len):
     try:
         text = get_text_from_chat(task, temperature)
+        while text_len and len(text) + 100 < text_len:
+            print('дописали текст')
+            text = add_text(text, text_len)
         print('получили текст')
         text_uniqueness = get_text_uniqueness(text)
         print('получили уникальность')
@@ -90,7 +107,6 @@ def generate_text(task, temperature, rewriting_task, required_uniqueness):
 
 
 def generate_text_set_zip(text_set):
-    print('starting make archive')
     buffer = BytesIO()
 
     with zipfile.ZipFile(buffer, 'a', zipfile.ZIP_DEFLATED, False) as zipf:
@@ -105,7 +121,6 @@ def generate_text_set_zip(text_set):
         task_strings = text_set.task_strings
         failed_texts = text_set.failed_texts
         low_uniqueness_texts = text_set.low_uniqueness_texts
-        print('packing main text')
         zipf.writestr("запрос на тексты.txt", task_strings)
         if failed_texts:
             zipf.writestr("не получились.txt", failed_texts)
@@ -122,7 +137,8 @@ def generate_texts(author,
                    temperature,
                    task_strings,
                    rewriting_task,
-                   required_uniqueness):
+                   required_uniqueness,
+                   text_len):
     task_list = [task for task in task_strings.split('\n') if "||" in task]
     new_set = TextsParsingSet.objects.create(
         total_amount=len(task_list),
@@ -136,7 +152,8 @@ def generate_texts(author,
         text_data = generate_text(chat_request,
                                   temperature,
                                   rewriting_task,
-                                  required_uniqueness)
+                                  required_uniqueness,
+                                  text_len)
 
         if not text_data:
             new_set.failed_texts += task + '\n'
