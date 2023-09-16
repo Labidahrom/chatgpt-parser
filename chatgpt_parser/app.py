@@ -79,6 +79,7 @@ def get_text_uniqueness(text):
         if 'text_unique' in response.json():
             return float(response.json()["text_unique"])
         attempts += 1
+    print('не удалось получить уникальность текста')
 
 
 def generate_text(task, temperature, rewriting_task, required_uniqueness, text_len):
@@ -103,6 +104,7 @@ def generate_text(task, temperature, rewriting_task, required_uniqueness, text_l
             'text_uniqueness': text_uniqueness
         }
     except:
+        print('не удалось выполнить задачу')
         return
 
 

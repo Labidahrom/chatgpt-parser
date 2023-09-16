@@ -21,9 +21,9 @@ class CreateTextForm(forms.Form):
               ' значению',
         initial=0,
         min_value=0,
-        max_value=3000,
+        max_value=5000,
         widget=forms.TextInput(
-            attrs={'placeholder': 'от 0 до 3000'})
+            attrs={'placeholder': 'от 0 до 5000'})
     )
     tasks_strings = forms.CharField(
         label='Введите список значений',
