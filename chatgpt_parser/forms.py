@@ -18,12 +18,12 @@ class CreateTextForm(forms.Form):
     text_len = forms.IntegerField(
         label='Минимальная длина текста в символах. Если поставить '
               'больше 0, будет включена проверка длины текста указанному'
-              ' значению',
+              ' значению. Допустимый диапазон: от 1 до 3000',
         initial=0,
         min_value=0,
-        max_value=5000,
+        max_value=3000,
         widget=forms.TextInput(
-            attrs={'placeholder': 'от 0 до 5000'})
+            attrs={'placeholder': 'от 0 до 3000'})
     )
     tasks_strings = forms.CharField(
         label='Введите список значений',

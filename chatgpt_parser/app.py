@@ -79,25 +79,28 @@ def get_text_uniqueness(text):
         if 'text_unique' in response.json():
             return float(response.json()["text_unique"])
         attempts += 1
-    print('не удалось получить уникальность текста')
+    print('\nне удалось получить уникальность текста')
 
 
 def generate_text(task, temperature, rewriting_task, required_uniqueness, text_len):
     try:
         text = get_text_from_chat(task, temperature)
+        counter = 0
         while text_len and len(text) + 100 < text_len:
-            print('дописали текст')
+            counter += 1
+            print(f'\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nдописали текст в {counter} раз, длина: {len(text)}. Отправили переписываться по новой\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n')
             text = add_text(text, text_len)
-        print('получили текст')
+        print('\nполучили текст достаточной длины, щас будем считать уникальность')
         text_uniqueness = get_text_uniqueness(text)
-        print('получили уникальность')
+        print('\nполучили уникальность')
         attempts_to_uniqueness = 0
         while text_uniqueness < float(required_uniqueness) and attempts_to_uniqueness <= 3:
             text = raise_uniqueness(text, rewriting_task)
-            print('переписали текст')
+            print('\nпереписали текст')
             text_uniqueness = get_text_uniqueness(text)
-            print('пересчитали уникальность')
+            print('\nпересчитали уникальность')
             attempts_to_uniqueness += 1
+        print('\nполучили текст достаточной уникальности')
         return {
             'text': text,
             'attempts_to_uniqueness': attempts_to_uniqueness,

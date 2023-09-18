@@ -36,15 +36,20 @@ class GenerateTexts(View):
         return render(request, 'generate_texts.html', {'form': form})
 
     def post(self, request, *args, **kwargs):
-        generate_texts.delay(
-            author=request.user.id,
-            set_name=request.POST.get('set_name', ''),
-            temperature=request.POST.get('temperature', ''),
-            task_strings=request.POST.get('tasks_strings', ''),
-            required_uniqueness=request.POST.get('required_uniqueness', ''),
-            rewriting_task=request.POST.get('rewriting_task', ''),
-            text_len=int(request.POST.get('text_len', '')))
-        return render(request, 'index.html')
+        form = CreateTextForm(request.POST)
+        if form.is_valid():
+            generate_texts.delay(
+                author=request.user.id,
+                set_name=form.cleaned_data['set_name'],
+                temperature=form.cleaned_data['temperature'],
+                task_strings=form.cleaned_data['tasks_strings'],
+                required_uniqueness=form.cleaned_data['required_uniqueness'],
+                rewriting_task=form.cleaned_data['rewriting_task'],
+                text_len=form.cleaned_data['text_len']
+            )
+            return render(request, 'index.html')
+        else:
+            return render(request, 'generate_texts.html', {'form': form})
 
 
 
